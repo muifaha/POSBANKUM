@@ -30,8 +30,7 @@ export default function LoginPage() {
     try {
       const res = await loginAction(formData);
       if (res.success) {
-        router.push("/admin");
-        router.refresh();
+        window.location.href = "/admin";
       } else {
         setError(res.error || "Gagal masuk.");
       }

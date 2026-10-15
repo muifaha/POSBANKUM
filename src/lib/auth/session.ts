@@ -47,9 +47,20 @@ export async function createSession(user: SessionUser) {
   });
   const token = sign(payload);
   const cookieStore = await cookies();
+
+  let isHttps = false;
+  try {
+    const { headers } = await import("next/headers");
+    const headerList = await headers();
+    const proto = headerList.get("x-forwarded-proto");
+    isHttps = proto === "https" || (process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ?? false);
+  } catch {
+    isHttps = false;
+  }
+
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
