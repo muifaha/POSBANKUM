@@ -1,20 +1,26 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
+// Muat file .env secara eksplisit dari root direktori
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
 const dbUrl = process.env.DATABASE_URL || "postgres://postgres@localhost:5432/posbankum";
 
-// Validasi format connection string
+// Peringatan jika password kosong di environment Linux / production
 try {
   const parsed = new URL(dbUrl);
-  if (!parsed.password && process.env.NODE_ENV === "production") {
+  if (!parsed.password && process.platform === "linux") {
     console.warn(
-      "⚠️ PERINGATAN: DATABASE_URL tidak memiliki kata sandi. Jika PostgreSQL memerlukan autentikasi SCRAM/MD5, koneksi akan gagal."
+      `⚠️ [PERINGATAN DATABASE] DATABASE_URL (${parsed.protocol}//${parsed.username}@${parsed.host}${parsed.pathname}) tidak menyertakan password.\n` +
+      `PostgreSQL di Linux (SCRAM-SHA-256) akan menolak koneksi tanpa password.\n` +
+      `Pastikan di .env tertulis: DATABASE_URL="postgres://username:password@127.0.0.1:5432/posbankum"`
     );
   }
 } catch {
-  // Biarkan node-postgres menangani parsing
+  // Abaikan jika parsing gagal
 }
 
 const pool = new Pool({
