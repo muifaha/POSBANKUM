@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --color-brand-50: #EAF3F0;
+  --color-brand-100: #CFE3DC;
+  --color-brand-200: #A2C8BB;
+  --color-brand-300: #6FA796;
+  --color-brand-400: #3F8470;
+  --color-brand-500: #2A6B59;
+  --color-brand-600: #1F5A4B;
+  --color-brand-700: #184739;
+  --color-brand-800: #12352B;
+  --color-brand-900: #0B231C;
+
+  --color-gold-50: #FBF4E2;
+  --color-gold-100: #F5E4B8;
+  --color-gold-200: #EBCF8A;
+  --color-gold-300: #E3BD62;
+  --color-gold-400: #D6A840;
+  --color-gold-500: #C9962B;
+  --color-gold-600: #A87A1E;
+  --color-gold-700: #865F17;
+  --color-gold-800: #644711;
+  --color-gold-900: #42300B;
+
+  --color-cream-100: #F7F3E8;
+  --color-ink-700: #3C4A45;
+
+  --radius-card: 12px;
+  --radius-control: 10px;
+}
+
+body {
+  color: #3C4A45;
+  background-color: #FAFAF8;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+/* Accessible focus ring across all interactive elements */
+:focus-visible {
+  outline: 2px solid #C9962B !important;
+  outline-offset: 2px !important;
+}
+
+/* Tap target utility */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
