@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "./index";
 import { divisions, categories, users, siteSettings, contentPages } from "./schema";
 import { hashPassword } from "../auth/password";
