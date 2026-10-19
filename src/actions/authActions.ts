@@ -61,11 +61,28 @@ export async function loginAction(formData: FormData): Promise<LoginResult> {
     });
 
     return { success: true };
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Login error:", err);
+    const errorObj = err as { code?: string; message?: string };
+
+    let errorMessage = "Terjadi kesalahan internal saat memproses autentikasi.";
+
+    if (errorObj?.code === "42P01" || errorObj?.message?.includes("does not exist")) {
+      errorMessage =
+        "Tabel database belum terbuat di PostgreSQL. Silakan jalankan 'npx drizzle-kit push' dan 'npm run db:seed' di terminal server.";
+    } else if (
+      errorObj?.code === "ECONNREFUSED" ||
+      errorObj?.message?.includes("connect ECONNREFUSED")
+    ) {
+      errorMessage =
+        "Gagal terhubung ke database. Pastikan PostgreSQL sedang berjalan di server.";
+    } else if (errorObj?.message?.includes("password")) {
+      errorMessage = `Koneksi database ditolak: ${errorObj.message}`;
+    }
+
     return {
       success: false,
-      error: "Terjadi kesalahan internal saat memproses autentikasi.",
+      error: errorMessage,
     };
   }
 }
