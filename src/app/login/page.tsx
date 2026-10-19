@@ -30,7 +30,8 @@ export default function LoginPage() {
     try {
       const res = await loginAction(formData);
       if (res.success) {
-        window.location.href = "/admin";
+        window.location.replace("/admin");
+        return;
       } else {
         setError(res.error || "Gagal masuk.");
       }

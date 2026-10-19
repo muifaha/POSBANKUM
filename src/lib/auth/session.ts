@@ -13,26 +13,31 @@ export interface SessionUser {
 }
 
 function sign(payload: string): string {
+  const b64 = Buffer.from(payload, "utf8").toString("base64url");
   const hmac = createHmac("sha256", SECRET);
-  hmac.update(payload);
-  return `${payload}.${hmac.digest("hex")}`;
+  hmac.update(b64);
+  return `${b64}.${hmac.digest("hex")}`;
 }
 
 function verify(token: string): string | null {
   const lastDot = token.lastIndexOf(".");
   if (lastDot === -1) return null;
-  const payload = token.slice(0, lastDot);
+  const rawPayload = token.slice(0, lastDot);
   const signature = token.slice(lastDot + 1);
 
   const hmac = createHmac("sha256", SECRET);
-  hmac.update(payload);
+  hmac.update(rawPayload);
   const expectedSignature = hmac.digest("hex");
 
   try {
     const a = Buffer.from(signature, "hex");
     const b = Buffer.from(expectedSignature, "hex");
     if (a.length === b.length && timingSafeEqual(a, b)) {
-      return payload;
+      // Dukungan payload base64url atau raw JSON lama
+      if (rawPayload.startsWith("{")) {
+        return rawPayload;
+      }
+      return Buffer.from(rawPayload, "base64url").toString("utf8");
     }
   } catch {
     return null;
@@ -48,12 +53,17 @@ export async function createSession(user: SessionUser) {
   const token = sign(payload);
   const cookieStore = await cookies();
 
+  // Deteksi HANYA apakah browser saat ini benar-benar mengakses via HTTPS
   let isHttps = false;
   try {
     const { headers } = await import("next/headers");
     const headerList = await headers();
     const proto = headerList.get("x-forwarded-proto");
-    isHttps = proto === "https" || (process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ?? false);
+    const referer = headerList.get("referer") || "";
+
+    if (proto === "https" || referer.startsWith("https://")) {
+      isHttps = true;
+    }
   } catch {
     isHttps = false;
   }
@@ -106,10 +116,8 @@ export function canViewReport(
     return true;
   }
   if (user.role === "paralegal") {
-    // Paralegal hanya bisa melihat laporan di divisinya sendiri
     return user.divisionId === report.divisionId;
   }
-  // Pemantau tidak boleh melihat detail isi laporan individual (hanya rekap)
   return false;
 }
 
