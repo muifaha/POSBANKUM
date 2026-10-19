@@ -13,13 +13,29 @@ export const metadata = {
 };
 
 export default async function TentangPage() {
-  const page = await db.query.contentPages.findFirst({
-    where: eq(contentPages.key, "tentang"),
-  });
+  let page: { bodyMd: string } | null | undefined = null;
+  let divisionList: { id: string; name: string; description: string | null }[] = [];
 
-  const divisionList = await db.query.divisions.findMany({
-    where: eq(divisions.isActive, true),
-  });
+  try {
+    page = await db.query.contentPages.findFirst({
+      where: eq(contentPages.key, "tentang"),
+    });
+    divisionList = await db.query.divisions.findMany({
+      where: eq(divisions.isActive, true),
+    });
+  } catch {
+    page = null;
+    divisionList = [];
+  }
+
+  const defaultAbout = `Pos Bantuan Hukum (Posbankum) Kelurahan Mangunsari merupakan inisiatif resmi pemerintah Kelurahan Mangunsari untuk memberikan akses keadilan seluas-luasnya bagi seluruh warga kelurahan.
+
+Layanan ini dirancang untuk:
+1. Memberikan konsultasi hukum awal secara cuma-cuma kepada warga.
+2. Memfasilitasi mediasi dan musyawarah damai dalam perkara perselisihan lingkungan/keluarga.
+3. Memberikan rujukan advokasi dan pendampingan resmi bagi korban tindak kekerasan terhadap perempuan dan anak.
+
+Pengurus dan Paralegal Posbankum bertindak berdasarkan asas kerahasiaan, keadilan, dan tanpa diskriminasi.`;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF8]">
@@ -40,8 +56,7 @@ export default async function TentangPage() {
                 <span>Maksud & Tujuan Pendirian</span>
               </h3>
               <p className="text-base text-[#3C4A45] leading-relaxed whitespace-pre-line">
-                {page?.bodyMd ||
-                  "Pos Bantuan Hukum (Posbankum) Kelurahan Mangunsari merupakan inisiatif resmi pemerintah Kelurahan Mangunsari untuk memberikan akses keadilan seluas-luasnya bagi seluruh warga kelurahan."}
+                {page?.bodyMd || defaultAbout}
               </p>
             </div>
 
@@ -56,19 +71,25 @@ export default async function TentangPage() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {divisionList.map((div) => (
-                  <div
-                    key={div.id}
-                    className="p-4 rounded-[12px] bg-[#EAF3F0]/60 border border-[#CFE3DC]"
-                  >
-                    <h4 className="font-semibold text-base text-[#184739] mb-1">
-                      {div.name}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#3C4A45]/80 leading-normal">
-                      {div.description || "Bertanggung jawab atas mediasi dan pendampingan di bidangnya."}
-                    </p>
-                  </div>
-                ))}
+                {divisionList.length > 0 ? (
+                  divisionList.map((div) => (
+                    <div
+                      key={div.id}
+                      className="p-4 rounded-[12px] bg-[#EAF3F0]/60 border border-[#CFE3DC]"
+                    >
+                      <h4 className="font-semibold text-base text-[#184739] mb-1">
+                        {div.name}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-[#3C4A45]/80 leading-normal">
+                        {div.description || "Bertanggung jawab atas mediasi dan pendampingan di bidangnya."}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-[#3C4A45]/60 italic col-span-2">
+                    Daftar divisi sedang diperbarui oleh administrator.
+                  </p>
+                )}
               </div>
             </div>
 

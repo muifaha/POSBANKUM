@@ -15,9 +15,25 @@ export const metadata = {
 };
 
 export default async function PanduanPage() {
-  const page = await db.query.contentPages.findFirst({
-    where: eq(contentPages.key, "panduan"),
-  });
+  let page: { bodyMd: string } | null | undefined = null;
+  try {
+    page = await db.query.contentPages.findFirst({
+      where: eq(contentPages.key, "panduan"),
+    });
+  } catch {
+    page = null;
+  }
+
+  const defaultContent = `Sebelum menyampaikan pengaduan atau konsultasi, harap perhatikan hal-hal berikut:
+
+### Batas Layanan
+1. Website ini adalah kanal penerimaan aduan dan permohonan konsultasi Posbankum Kelurahan Mangunsari.
+2. **Website ini BUKAN pengganti laporan kepolisian atau nomor gawat darurat.** Jika Anda berada dalam situasi bahaya fisik yang mengancam keselamatan jiwa saat ini, segera hubungi polisi di nomor **110** atau kontak darurat kelurahan.
+3. Setiap laporan akan diverifikasi paling lambat dalam **24 jam kerja**.
+
+### Perlindungan Privasi & Opsi Anonim
+- Anda diperbolehkan melapor secara **anonim (tanpa identitas)** terutama untuk kasus sensitif.
+- Anda akan tetap mendapatkan **Kode Tiket** dan **PIN Rahasia** untuk memantau perkembangan tindak lanjut laporan Anda.`;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF8]">
@@ -37,8 +53,7 @@ export default async function PanduanPage() {
                 <span>Tata Cara & Ketentuan</span>
               </h3>
               <div className="text-base text-[#3C4A45] leading-relaxed whitespace-pre-line space-y-2">
-                {page?.bodyMd ||
-                  "Setiap warga berhak mendapatkan bantuan hukum secara gratis. Pelaporan dilakukan melalui formulir bertahap."}
+                {page?.bodyMd || defaultContent}
               </div>
             </div>
 

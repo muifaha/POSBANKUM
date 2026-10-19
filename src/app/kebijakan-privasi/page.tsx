@@ -13,9 +13,19 @@ export const metadata = {
 };
 
 export default async function KebijakanPrivasiPage() {
-  const page = await db.query.contentPages.findFirst({
-    where: eq(contentPages.key, "kebijakan_privasi"),
-  });
+  let page: { bodyMd: string } | null | undefined = null;
+  try {
+    page = await db.query.contentPages.findFirst({
+      where: eq(contentPages.key, "kebijakan_privasi"),
+    });
+  } catch {
+    page = null;
+  }
+
+  const defaultPolicy = `Sesuai Undang-Undang No. 27 Tahun 2022 tentang Pelindungan Data Pribadi:
+1. Data pribadi yang Anda serahkan (nama, kontak, alamat, kronologi perkara) hanya digunakan untuk kepentingan verifikasi dan tindak lanjut bantuan hukum oleh Posbankum Kelurahan Mangunsari.
+2. Data sensitif dan identitas pelapor tidak akan dipublikasikan atau dibagikan ke pihak ketiga di luar penegakan hukum yang berwenang.
+3. Setelah laporan selesai diproses dan masa retensi berakhir, data pribadi Anda akan dihapus atau dianonimkan untuk keperluan statistik.`;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF8]">
@@ -35,7 +45,7 @@ export default async function KebijakanPrivasiPage() {
             </div>
 
             <div className="text-base text-[#3C4A45] leading-relaxed whitespace-pre-line space-y-4">
-              {page?.bodyMd}
+              {page?.bodyMd || defaultPolicy}
             </div>
 
             <div className="pt-6 border-t border-[#CFE3DC] text-xs text-[#3C4A45]/70">
