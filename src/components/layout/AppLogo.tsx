@@ -17,11 +17,12 @@ export function AppLogo({ href = "/", variant = "full", size = "md", className =
 
   const content = (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
-      <div className={`relative ${heights[size]} aspect-[2.7/1]`}>
+      <div className={`relative ${heights[size]} aspect-[2.57/1]`}>
         <Image
-          src="/logo-posbankum-mangunsari.svg"
-          alt="Logo Pos Bantuan Hukum Kelurahan Mangunsari"
+          src="/logo-lapor-posbankum.png"
+          alt="LAPOR! POSBANKUM - Layanan Pengaduan Pos Bantuan Hukum Kelurahan Mangunsari"
           fill
+          sizes="(max-width: 768px) 150px, 200px"
           className="object-contain"
           priority
         />

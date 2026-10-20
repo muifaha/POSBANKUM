@@ -30,11 +30,12 @@ export default function HomePage() {
           <PageContainer size="md">
             <div className="flex flex-col items-center text-center">
               {/* Logo Besar */}
-              <div className="relative w-48 h-20 sm:w-64 sm:h-24 mb-6">
+              <div className="relative w-52 h-20 sm:w-72 sm:h-28 mb-6">
                 <Image
-                  src="/logo-posbankum-mangunsari.svg"
-                  alt="Logo Pos Bantuan Hukum Kelurahan Mangunsari"
+                  src="/logo-lapor-posbankum.png"
+                  alt="LAPOR! POSBANKUM - Layanan Pengaduan Pos Bantuan Hukum Kelurahan Mangunsari"
                   fill
+                  sizes="(max-width: 640px) 208px, 288px"
                   className="object-contain"
                   priority
                 />

@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   description:
     "Layanan pengaduan dan konsultasi hukum terpercaya untuk warga Kelurahan Mangunsari. Aman, profesional, dan dapat diakses kapan saja.",
   icons: {
-    icon: "/logo-posbankum-mangunsari.svg",
+    icon: "/logo-lapor-posbankum.png",
+    apple: "/logo-lapor-posbankum.png",
   },
 };
 
